@@ -1,18 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>AR Artwork</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
   <!-- A-Frame -->
-  <script src="https://unpkg.com/aframe@1.4.0/dist/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe@1.4.2/dist/aframe.min.js"></script>
 
   <!-- MindAR -->
   <script src="https://unpkg.com/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
-    body { margin: 0; overflow: hidden; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      font-family: sans-serif;
+    }
+
+    #startAR {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+      color: white;
+      font-size: 20px;
+      z-index: 9999;
+      border: none;
+    }
+
     #hint {
       position: fixed;
       bottom: 20px;
@@ -20,28 +39,42 @@
       transform: translateX(-50%);
       background: rgba(0,0,0,0.6);
       color: white;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-family: sans-serif;
+      padding: 8px 14px;
+      border-radius: 6px;
       font-size: 14px;
+      z-index: 10;
+      display: none;
     }
   </style>
 </head>
 
 <body>
+
+  <!-- START BUTTON (REQUIRED FOR MOBILE) -->
+  <button id="startAR">Start AR</button>
+
+  <!-- AR SCENE -->
   <a-scene
-    mindar-image="imageTargetSrc: targets.mind; autoStart: true;"
-    color-space="sRGB"
+    mindar-image="imageTargetSrc: targets.mind; autoStart: false;"
     embedded
-    vr-mode-ui="enabled: false">
+    vr-mode-ui="enabled: false"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights">
 
     <a-assets>
-      <video id="artVideo" src="artwork1_anim.mp4" loop muted playsinline></video>
+      <video
+        id="artVideo"
+        src="artwork1_anim.mp4"
+        loop
+        muted
+        playsinline
+        crossorigin="anonymous">
+      </video>
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <!-- This locks content to your artwork -->
+    <!-- IMAGE TARGET -->
     <a-entity mindar-image-target="targetIndex: 0">
       <a-video
         src="#artVideo"
@@ -51,22 +84,33 @@
         height="0.6">
       </a-video>
     </a-entity>
+
   </a-scene>
 
   <div id="hint">Point the camera at the artwork</div>
 
- <script>
-  const video = document.querySelector("#artVideo");
-  const target = document.querySelector("[mindar-image-target]");
-  
-  target.addEventListener("targetFound", () => {
-    video.play();
-  });
+  <!-- LOGIC -->
+  <script>
+    const startButton = document.getElementById("startAR");
+    const scene = document.querySelector("a-scene");
+    const video = document.getElementById("artVideo");
+    const hint = document.getElementById("hint");
+    const target = document.querySelector("[mindar-image-target]");
 
-  target.addEventListener("targetLost", () => {
-    video.pause();
-  });
-</script>
+    startButton.addEventListener("click", async () => {
+      startButton.style.display = "none";
+      hint.style.display = "block";
+      await scene.systems["mindar-image"].start();
+    });
+
+    target.addEventListener("targetFound", () => {
+      video.play();
+    });
+
+    target.addEventListener("targetLost", () => {
+      video.pause();
+    });
+  </script>
 
 </body>
 </html>
