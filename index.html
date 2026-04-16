@@ -8,8 +8,33 @@
     <!-- Same versions as your working example -->
     <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <!-- ✅ ADDED: Watermark + slower scanning animation -->
+    <style>
+      /* Watermark */
+      #watermark {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+        font-family: Arial, sans-serif;
+        z-index: 9999;
+        pointer-events: none;
+      }
+
+      /* Slow down MindAR scanning animation */
+      .mindar-ui-scanning .scanning {
+        animation-duration: 3s !important; /* default is faster */
+      }
+    </style>
   </head>
+
   <body>
+    <!-- ✅ ADDED: Watermark text -->
+    <div id="watermark">Developed by SURJAYAN</div>
+
     <a-scene
       mindar-image="imageTargetSrc: targets.mind;"
       color-space="sRGB"
@@ -58,4 +83,3 @@
     </script>
   </body>
 </html>
-
