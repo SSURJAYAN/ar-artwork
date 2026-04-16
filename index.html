@@ -12,17 +12,27 @@
     <!-- ✅ ADDED: Watermark + slower scanning animation -->
     <style>
       /* Watermark */
-      #watermark {
-        position: fixed;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 14px;
-        color: rgba(255, 255, 255, 0.6);
-        font-family: Arial, sans-serif;
-        z-index: 9999;
-        pointer-events: none;
-      }
+     #watermark {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: Arial, sans-serif;
+  z-index: 999999; /* push higher */
+  pointer-events: none;
+}
+
+/* 🚨 Critical fix */
+body > * {
+  position: relative;
+  z-index: 0;
+}
+
+#watermark {
+  z-index: 2147483647; /* absolute max */
+}
 
       /* Slow down MindAR scanning animation */
       .mindar-ui-scanning .scanning {
